@@ -1,0 +1,7 @@
+minikube start
+if [[ $? -ne 0 ]]; then
+    echo minikube start Failed
+    exit 1
+fi
+./mk-enableRegistry
+./mk-port-5000

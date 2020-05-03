@@ -1,0 +1,3 @@
+go build -o httpForwarder cmd/main.go
+echo DIR: .
+ls -la httpForwarder

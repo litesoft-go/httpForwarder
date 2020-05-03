@@ -1,0 +1,5 @@
+minikube stop
+if [[ $? -ne 0 ]]; then
+    echo minikube stop Failed
+    exit 1
+fi

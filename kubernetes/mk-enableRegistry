@@ -1,0 +1,5 @@
+minikube addons enable registry
+if [[ $? -ne 0 ]]; then
+    echo minikube addons enable registry Failed
+    exit 1
+fi

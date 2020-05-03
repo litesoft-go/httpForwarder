@@ -1,0 +1,3 @@
+github.com/litesoft-go/MockVoltDB v0.0.0-20200406213354-74d2b87ce486 h1:5pFFCKxdzLjP1X+yDL7cHDP1NZ3aJnpscVM7VI/QimU=
+github.com/litesoft-go/mockvoltdb v0.0.0-20200428234842-2944be18a0df h1:x9MgD2pLmLYuMFwN1DkldwJuihUVlwxNsqfVWrCiPVI=
+github.com/litesoft-go/mockvoltdb v0.0.0-20200428234842-2944be18a0df/go.mod h1:gx88H15Csw48yrrURERzymOtljCEqV1f4sm+rkEC0G0=

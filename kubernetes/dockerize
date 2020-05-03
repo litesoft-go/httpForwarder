@@ -1,0 +1,7 @@
+if [ $# -eq 0 ]
+  then
+    echo "Please provide an Image name"
+    exit 1
+fi
+cp ../deployable/linux_amd64/httpForwarder ./instance/deployment/bin/httpForwarder
+docker build -t $1 .

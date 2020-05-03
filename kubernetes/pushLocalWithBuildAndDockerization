@@ -1,0 +1,82 @@
+imageName=http-forwarder
+
+pushd -n $(pwd)
+cd ..
+./linux_amd64_build
+if [[ $? -ne 0 ]]; then
+    echo Build Failed
+    exit 1
+fi
+popd
+
+simpleCount=$(docker images | grep -c ^$imageName)
+if [ "$simpleCount" != "0" ]
+then
+docker rmi -f localhost:5000/$imageName:latest
+if [[ $? -ne 0 ]]; then
+    echo docker rmi previous simple image Failed
+    exit 1
+fi
+fi
+
+simpleCount=$(docker images | grep -c 5000/$imageName)
+if [ "$simpleCount" != "0" ]
+then
+docker rmi -f localhost:5000/$imageName:latest
+if [[ $? -ne 0 ]]; then
+    echo docker rmi previous 5000 image Failed
+    exit 1
+fi
+fi
+
+./dockerize $imageName
+if [[ $? -ne 0 ]]; then
+    echo Dockerize Failed
+    exit 1
+fi
+
+echo .
+echo .
+echo ...........................
+docker images | grep $imageName
+echo ...........................
+echo .
+echo .
+
+
+docker tag $imageName:latest localhost:5000/$imageName:latest
+if [[ $? -ne 0 ]]; then
+    echo docker tag Failed
+    exit 1
+fi
+
+docker push localhost:5000/$imageName:latest
+if [[ $? -ne 0 ]]; then
+    echo docker push Failed
+    exit 1
+fi
+
+docker rmi -f localhost:5000/$imageName:latest
+if [[ $? -ne 0 ]]; then
+    echo docker rmi Failed
+    exit 1
+fi
+
+echo .
+echo .
+echo ...........................
+docker images | grep $imageName
+echo ...........................
+echo .
+echo .
+
+docker pull localhost:5000/$imageName
+if [[ $? -ne 0 ]]; then
+    echo docker pull Failed
+    exit 1
+fi
+
+echo .
+echo .
+echo ...........................
+docker image ls

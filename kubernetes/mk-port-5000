@@ -1,0 +1,11 @@
+simpleCount=$(docker container ls | grep -c port_5000_forwarder)
+if [ "$simpleCount" != "0" ]
+then
+echo port_5000_forwarder already running
+else
+docker run --name=port_5000_forwarder --rm --network=host alpine ash -c "apk add socat && socat TCP-LISTEN:5000,reuseaddr,fork TCP:$(minikube ip):5000"
+if [[ $? -ne 0 ]]; then
+    echo docker port forwarding Failed
+    exit 1
+fi
+fi

@@ -1,0 +1,3 @@
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o deployable/linux_amd64/httpForwarder cmd/main.go
+echo DIR: deployable/linux_amd64
+ls -la deployable/linux_amd64/httpForwarder
