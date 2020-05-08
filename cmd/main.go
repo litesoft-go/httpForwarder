@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -243,10 +244,12 @@ type ResponseHandler struct {
 func (rh ResponseHandler) handleResponse(r *http.Response, err error) {
 	rw := rh.rw
 	if err == nil {
-		copyHeaders(r.Header, rw.Header())
-		err = copyBody(r.Body, rw)
+		var body []byte
+		body, err = loadBody(r.Body)
 		if err == nil {
+			copyHeaders(r.Header, rw.Header())
 			rw.WriteHeader(r.StatusCode)
+			_ = writeBody(body, rw)
 			return
 		}
 	}
@@ -269,21 +272,20 @@ func copySlice(src []string) []string {
 	return dst
 }
 
-func copyBody(in io.ReadCloser, out io.Writer) error {
+func loadBody(in io.ReadCloser) ([]byte, error) {
 	defer func() {
 		_ = in.Close() // Per Dave Cheney 2017 - auto drains!
 	}()
-	buffer := make([]byte, 1024)
-	for {
-		read, err := in.Read(buffer)
-		if read != 0 {
-			_, err = out.Write(buffer[:read])
-		}
+	return ioutil.ReadAll(in)
+}
+
+func writeBody(body []byte, out io.Writer) error {
+	for from := 0; from < len(body); {
+		wrote, err := out.Write(body[from:])
 		if err != nil {
-			if err == io.EOF {
-				return nil
-			}
 			return err
 		}
+		from += wrote
 	}
+	return nil
 }
