@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-forwarder
+spec:
+  ports:
+    - port: 13734
+  selector:
+    app: http-forwarder
+  clusterIP: None
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: http-forwarder
+spec:
+  selector:
+    matchLabels:
+      app: http-forwarder
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: http-forwarder
+    spec:
+      containers:
+        - image: localhost:5000/http-forwarder
+          name: http-forwarder
+          ports:
+            - containerPort: 13734
+              name: http-forwarder
