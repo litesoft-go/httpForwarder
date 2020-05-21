@@ -35,7 +35,7 @@ var methods = []string{"GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIO
 var methodMap = map[string]string{
 	"GET":/* . . . */ "GET     #7", // The GET method requests a representation of the specified resource. Requests using GET should only retrieve data.
 	"HEAD":/*  . . */ "HEAD    #2", // The HEAD method asks for a response identical to that of a GET request, but without the response body.
-	"POST":/*  . . */ "POST    #0", // The POST method is used to submit an entity to the specified resource, often causing a change in state or side effects on the server.
+	"POST":/*  . . */ "POST    #2", // The POST method is used to submit an entity to the specified resource, often causing a change in state or side effects on the server.
 	"PUT":/* . . . */ "PUT     #0", // The PUT method replaces all current representations of the target resource with the request payload.
 	"DELETE":/*  . */ "DELETE  #2", // The DELETE method deletes the specified resource.
 	"CONNECT":/* . */ "CONNECT #0", // The CONNECT method establishes a tunnel to the server identified by the target resource.
@@ -70,7 +70,7 @@ func collectSupported(pPathSupports Supports) string {
 	default:
 		index := len(supported) - 1
 		rv := wrap(supported, index)
-		for index = index - 1; index > 1; index = index - 1 {
+		for index--; index > 1; index-- {
 			rv += ", " + wrap(supported, index)
 		}
 		rv += ", " + wrap2(supported, 1, 0)
@@ -214,6 +214,8 @@ func handleForward(w http.ResponseWriter, r *http.Request) {
 		rh.handleResponse(client.Get(newURL))
 	case "HEAD":
 		rh.handleResponse(client.Head(newURL))
+	case "POST":
+		rh.handleResponse(sendPost(r, newURL))
 	default:
 		request, err := makeBodyLessRequest(r, newURL)
 		if err != nil {
@@ -224,6 +226,14 @@ func handleForward(w http.ResponseWriter, r *http.Request) {
 		}
 		rh.handleResponse(client.Do(request))
 	}
+}
+
+//noinspection GoUnhandledErrorResult
+func sendPost(in *http.Request, newURL string) (r *http.Response, err error) {
+	readCloser := in.Body
+	defer readCloser.Close()
+	contentType := in.Header.Get("Content-type")
+	return client.Post(newURL, contentType, readCloser)
 }
 
 // DELETE, OPTIONS, & TRACE
@@ -257,7 +267,7 @@ func (rh ResponseHandler) handleResponse(r *http.Response, err error) {
 		err.Error())
 }
 
-func copyHeaders(src http.Header, dst http.Header) {
+func copyHeaders(src, dst http.Header) {
 	for k, v := range src {
 		dst[k] = copySlice(v)
 	}

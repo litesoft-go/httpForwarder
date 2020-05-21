@@ -1,0 +1,91 @@
+# For modifying default values, see docs at https://github.com/golangci/golangci-lint
+linters:
+  enable:
+    - bodyclose
+    - dogsled
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - golint
+    - goprintffuncname
+    - gosec
+    - interfacer
+    - misspell
+    - nakedret
+    - rowserrcheck
+    - scopelint
+    - unconvert
+    # Possible false positives:
+    - unparam
+    # All of the following are Enabled by default!
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    # Suspicious, unclear how to control (or what it does):
+    - staticcheck
+    - typecheck
+    - varcheck
+    # No Documentation:
+    - unused
+  # don't enable:
+  # - prealloc          Useful if using large slices, but currently generates False Positives
+  # - structcheck       Struct size/oder management, similar to "maligned"!
+  # - whitespace        Not allow blank lines at start of function
+  # - lll               Forces inappropriate wrapped function definition parameters
+  # - dupl              False Positives
+  # - depguard          Overhead re-managing out of control developers
+  # - funlen            Arbitrary
+  # - maligned          Struct size/oder management, similar to "structcheck"!
+  # - stylecheck        Replacement for golint - disabled by default (No documentation)
+  # - gochecknoglobals  Package globals as psuedo "constants" are actually a good idea
+  # - gochecknoinits    Prohibits init functions
+  # - gocognit          Calculates cognitive complexity - we are using cyclomatic complexity warnings
+  # - godox             Prohibit TODOs (and FIXMEs)
+  # - gomnd             Too many numbers used to replicate the current K8s Objects (too much maintenance to whitelist)
+
+# See: https://raw.githubusercontent.com/golangci/golangci-lint/master/.golangci.example.yml
+linters-settings:
+  gocritic:
+    enabled-checks:
+      - argorder
+      - badcall
+      - badcond
+      - builtinshadow
+      - exitafterdefer
+      - dupimport
+      - hexliteral
+      - initclause
+      - octalliteral
+      - offby1
+      - paramtypecombine
+      - ptrtorefparam
+      - stringxbytes
+      - unnamedresult
+      - valswap
+      - weakcond
+      - whynolint
+    enabled-tags: "performance"
+  gocyclo:
+    min-complexity: 20
+  govet:
+    enanble:
+      - shadow
+      - unreachable
+      - lostcancel
+      - errorsas
+  #  funlen:
+  #    lines: 100
+  #    statements: 40
+  #  golint:
+  #    # minimal confidence for issues, default is 0.8
+  #    min-confidence: 0.8
+
+issues:
+  exclude-rules:
+    - linters:
+        - golint
+      text: "ALL_CAPS"
