@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -237,14 +236,11 @@ func sendPost(in *http.Request, newURL string) (r *http.Response, err error) {
 }
 
 // DELETE, OPTIONS, & TRACE
+//noinspection GoUnhandledErrorResult
 func makeBodyLessRequest(in *http.Request, newURL string) (*http.Request, error) {
-	out := &http.Request{}
-	parsedURL, err := url.Parse(newURL)
-	if err == nil {
-		*out = *in // copy simple
-		out.URL = parsedURL
-	}
-	return out, err
+	readCloser := in.Body
+	defer readCloser.Close()
+	return http.NewRequest(in.Method, newURL, nil)
 }
 
 type ResponseHandler struct {
